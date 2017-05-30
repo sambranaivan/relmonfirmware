@@ -1,4 +1,4 @@
-/* Copyright 2017, Pablo Ridolfi
+/* Copyright 2016, Pablo Ridolfi
  * All rights reserved.
  *
  * This file is part of Workspace.
@@ -55,9 +55,6 @@
 /** statechart instance */
 static Idleblink statechart;
 
-/** tick flag */
-static uint32_t tick;
-
 /*==================[internal functions declaration]=========================*/
 
 /** @brief hardware initialization function
@@ -75,6 +72,7 @@ static void initHardware(void);
 static void initHardware(void)
 {
 	Board_Init();
+	Board_Buttons_Init();
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock / 1000);
 }
@@ -94,14 +92,16 @@ void idleblinkIface_opLED(Idleblink* handle, const sc_boolean onoff)
 /** SysTick interrupt handler */
 void SysTick_Handler(void)
 {
-	tick = 1;
+	/* send evTick event to state machine every 1ms */
+	idleblinkIface_raise_evTick(&statechart);
+
+	/* update state machine every 1ms */
+	idleblink_runCycle(&statechart);
 }
 
 /** main function, application entry point */
 int main(void)
 {
-	uint32_t buttonPressed = 0;
-
 	/* init and reset state machine */
 	idleblink_init(&statechart);
 	idleblink_enter(&statechart);
@@ -109,25 +109,15 @@ int main(void)
 	initHardware();
 
 	while (1) {
-		if ((Buttons_GetStatus() != NO_BUTTON_PRESSED) && (buttonPressed == 0)) {
+		if (Buttons_GetStatus() != NO_BUTTON_PRESSED) {
 			/* if a button is pressed, send evButton to state machine */
 			idleblinkIface_raise_evButton(&statechart);
-			/* use a flag to wait for button release */
-			buttonPressed = 1;
-		}
 
-		if (Buttons_GetStatus() == NO_BUTTON_PRESSED) {
-			buttonPressed = 0;
+			/* wait until button is released */
+			while (Buttons_GetStatus() != NO_BUTTON_PRESSED) {
+				__WFI(); /* wait for interrupt */
+			}
 		}
-
-		if (tick != 0) {
-			tick = 0;
-			/* send evTick event to state machine every 1ms */
-			idleblinkIface_raise_evTick(&statechart);
-		}
-
-		/* update state machine */
-		idleblink_runCycle(&statechart);
 	}
 }
 

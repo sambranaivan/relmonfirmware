@@ -31,9 +31,10 @@
 
 -include project.mk
 
-PROJECT ?= examples/blinky
+PROJECT ?= sapi_examples/edu-ciaa-nxp/sapi_spi_01_sdcard_fatfilesystem
+#PROJECT ?= examples/sd_spi
 TARGET ?= lpc4337_m4
-BOARD ?= edu_ciaa_nxp
+BOARD ?= ciaa_nxp
 
 include $(PROJECT)/Makefile
 
@@ -130,8 +131,3 @@ info:
 ctags:
 	@echo "Generating tags file."
 	ctags -R .
-
-generate:
-	php $(osek_PATH)/generator/generator.php --cmdline -l -v \
-	-DARCH=cortexM4 -DCPUTYPE=lpc43xx -DCPU=lpc4337 \
-	-c  $(PROJECT)/$(PROJECT_NAME).oil -f $(osek_GEN_FILES) -o $(PROJECT)/gen

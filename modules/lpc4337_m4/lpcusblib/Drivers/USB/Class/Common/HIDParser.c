@@ -135,7 +135,9 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 				{
 					CurrReportIDInfo = NULL;
 
-					for (uint8_t i = 0; i < ParserData->TotalDeviceReports; i++)
+					uint8_t i = 0;
+
+					for( i=0; i < ParserData->TotalDeviceReports; i++ )
 					{
 						if (ParserData->ReportIDSizes[i].ReportID == CurrStateTable->ReportID)
 						{
@@ -198,8 +200,9 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 				if (UsageListSize)
 				{
 					CurrCollectionPath->Usage.Usage = UsageList[0];
+					uint8_t i = 0;
 
-					for (uint8_t i = 0; i < UsageListSize; i++)
+					for( i=0; i < UsageListSize; i++ )
 					  UsageList[i] = UsageList[i + 1];
 
 					UsageListSize--;
@@ -218,8 +221,11 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 				break;
 			case HID_RI_INPUT(0):
 			case HID_RI_OUTPUT(0):
-			case HID_RI_FEATURE(0):
-				for (uint8_t ReportItemNum = 0; ReportItemNum < CurrStateTable->ReportCount; ReportItemNum++)
+			case HID_RI_FEATURE(0):{
+
+				uint8_t ReportItemNum = 0;
+
+				for ( ReportItemNum = 0; ReportItemNum < CurrStateTable->ReportCount; ReportItemNum++)
 				{
 					HID_ReportItem_t NewReportItem;
 
@@ -234,8 +240,8 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 					if (UsageListSize)
 					{
 						NewReportItem.Attributes.Usage.Usage = UsageList[0];
-
-						for (uint8_t i = 0; i < UsageListSize; i++)
+						uint8_t i = 0;
+						for ( i = 0; i < UsageListSize; i++)
 						  UsageList[i] = UsageList[i + 1];
 
 						UsageListSize--;
@@ -270,7 +276,7 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 					if (!(ReportItemData & HID_IOF_CONSTANT) && CALLBACK_HIDParser_FilterHIDReportItem(&NewReportItem))
 					  ParserData->TotalReportItems++;
 				}
-
+			}
 				break;
 		}
 
@@ -353,7 +359,8 @@ uint16_t USB_GetHIDReportSize(HID_ReportInfo_t* const ParserData,
                               const uint8_t ReportID,
                               const uint8_t ReportType)
 {
-	for (uint8_t i = 0; i < HID_MAX_REPORT_IDS; i++)
+	uint8_t i = 0;
+	for ( i = 0; i < HID_MAX_REPORT_IDS; i++)
 	{
 		uint16_t ReportSizeBits = ParserData->ReportIDSizes[i].ReportSizeBits[ReportType];
 

@@ -89,25 +89,28 @@ void SysTick_Handler(void)
 int main(void)
 {
     UINT nbytes;
-
+   uint32_t status;
     initHardware();
-
+    status = 0;
     /* Give a work area to the default drive */
     if (f_mount(&fs, "", 0) != FR_OK) {
         /* If this fails, it means that the function could
          * not register a file system object.
          * Check whether the SD card is correctly connected */
+    	status = 3;
     }
 
     /* Create/open a file, then write a string and close it */
-    if (f_open(&fp, FILENAME, FA_WRITE | FA_CREATE_ALWAYS) == FR_OK) {
-        f_write(&fp, "It works!\r\n", 11, &nbytes);
+    if (f_open(&fp, FILENAME, FA_WRITE | FA_OPEN_APPEND) == FR_OK) {
+    	status = 1;
+        f_write(&fp, "andaa!\r\n", 11, &nbytes);
 
         f_close(&fp);
 
         if (nbytes == 11) {
             /* Toggle a LED if the write operation was successful */
             Board_LED_Toggle(0);
+            status = 7;
         }
     }
 

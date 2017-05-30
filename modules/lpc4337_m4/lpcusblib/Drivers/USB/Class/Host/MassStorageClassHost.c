@@ -82,7 +82,8 @@ uint8_t MS_Host_ConfigurePipes(USB_ClassInfo_MS_Host_t* const MSInterfaceInfo,
 		  DataOUTEndpoint = EndpointData;
 	}
 
-	for (uint8_t PipeNum = 1; PipeNum < PIPE_TOTAL_PIPES; PipeNum++)
+	uint8_t PipeNum = 1;
+	for ( PipeNum = 1; PipeNum < PIPE_TOTAL_PIPES; PipeNum++)
 	{
 		uint16_t Size;
 		uint8_t  Type;
