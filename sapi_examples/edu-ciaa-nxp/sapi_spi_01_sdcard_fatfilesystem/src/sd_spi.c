@@ -44,7 +44,7 @@
 
 /*==================[macros and definitions]=================================*/
 
-#define FILENAME "hola.txt"
+#define FILENAME "ciaa.txt"
 
 /*==================[internal data declaration]==============================*/
 
@@ -88,6 +88,7 @@ char* obtenerRegistros(char* result)
   int j;
    for(j = 0; j<=70; j++){registro[j] = 0;}
 	muestra = adcRead( AI0 );
+  //  muestra = adcRead( CH1 );
 
 
 	int i;
@@ -165,11 +166,17 @@ int main(void){
 
    //UINT nbytes;
    char registro[70];
-   
 
    /* Inicializar la placa */
    boardConfig();
+   /* Inicializar el conteo de Ticks con resolución de 10ms,
+    * con tickHook diskTickHook */
+   tickConfig( 10, diskTickHook );
 
+   /* SPI configuration */
+   Board_SSP_Init(LPC_SSP1);
+   Chip_SSP_Init(LPC_SSP1);
+   Chip_SSP_Enable(LPC_SSP1);
    /* Inicializar GPIOs */
      gpioConfig( 0, GPIO_ENABLE );
 
@@ -188,34 +195,7 @@ int main(void){
      gpioConfig( LED3, GPIO_OUTPUT );
 
 
-     /* Configuración de pines de entrada de la CIAA-NXP */
-     gpioConfig( DI0, GPIO_INPUT );
-     gpioConfig( DI1, GPIO_INPUT );
-     gpioConfig( DI2, GPIO_INPUT );
-     gpioConfig( DI3, GPIO_INPUT );
-     gpioConfig( DI4, GPIO_INPUT );
-     gpioConfig( DI5, GPIO_INPUT );
-     gpioConfig( DI6, GPIO_INPUT );
-     gpioConfig( DI7, GPIO_INPUT );
 
-     /* Configuración de pines de salida de la CIAA-NXP */
-     gpioConfig( DO0, GPIO_OUTPUT );
-     gpioConfig( DO1, GPIO_OUTPUT );
-     gpioConfig( DO2, GPIO_OUTPUT );
-     gpioConfig( DO3, GPIO_OUTPUT );
-     gpioConfig( DO4, GPIO_OUTPUT );
-     gpioConfig( DO5, GPIO_OUTPUT );
-     gpioConfig( DO6, GPIO_OUTPUT );
-     gpioConfig( DO7, GPIO_OUTPUT );
-
-   /* Inicializar el conteo de Ticks con resolución de 10ms, 
-    * con tickHook diskTickHook */
-   tickConfig( 10, diskTickHook );
-
-   /* SPI configuration */
-   Board_SSP_Init(LPC_SSP1);
-   Chip_SSP_Init(LPC_SSP1);
-   Chip_SSP_Enable(LPC_SSP1);
 
    /* Inicializar AnalogIO */
      /* Posibles configuraciones:
@@ -226,7 +206,13 @@ int main(void){
      dacConfig( DAC_ENABLE ); /* DAC */
      uartConfig( UART_USB, 115200 );
      /* Variable para almacenar el valor leido del ADC CH1 */
-
+     delay(1000);
+     obtenerRegistros(registro);
+  	   escribirSD(registro);
+  	   enviarUSB(registro);
+  	   delay(1000);
+  	   gpioWrite( LEDG, OFF );
+  	   delay(1000);
 
              
 

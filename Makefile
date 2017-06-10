@@ -33,6 +33,7 @@
 
 PROJECT ?= sapi_examples/edu-ciaa-nxp/sapi_spi_01_sdcard_fatfilesystem
 #PROJECT ?= examples/sd_spi
+#PROJECT ?= examples/sapi_usb_device_01_hid_keyboard
 TARGET ?= lpc4337_m4
 BOARD ?= ciaa_nxp
 
